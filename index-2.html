@@ -1,0 +1,2094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Utilization Tracking & Monitoring System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #1e3a8a;
+            --secondary-blue: #3b82f6;
+            --light-blue: #dbeafe;
+            --accent-gold: #f59e0b;
+            --success-green: #10b981;
+            --danger-red: #ef4444;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-light: #f9fafb;
+            --white: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --primary-blue: #1e40af;
+            --secondary-blue: #60a5fa;
+            --light-blue: #1e293b;
+            --text-dark: #f9fafb;
+            --text-light: #d1d5db;
+            --bg-light: #0f172a;
+            --white: #1e293b;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-gold);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--accent-gold);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid var(--white);
+        }
+
+        .btn-secondary:hover {
+            background: var(--white);
+            color: var(--primary-blue);
+        }
+
+        .theme-toggle {
+            background: transparent;
+            border: none;
+            color: var(--white);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .lang-toggle {
+            background: transparent;
+            border: 1px solid var(--white);
+            color: var(--white);
+            padding: 0.4rem 0.8rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .mobile-menu {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--white);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(30, 58, 138, 0.85), rgba(30, 58, 138, 0.85)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%231e3a8a" width="1200" height="600"/><circle cx="200" cy="150" r="100" fill="%233b82f6" opacity="0.3"/><circle cx="900" cy="400" r="150" fill="%2360a5fa" opacity="0.2"/></svg>');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--white);
+            padding: 6rem 5% 2rem;
+        }
+
+        .hero-content {
+            max-width: 900px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            animation: fadeInUp 1.2s ease;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1.4s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 5%;
+            background: var(--white);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: var(--primary-blue);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--bg-light);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--secondary-blue);
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-blue);
+        }
+
+        /* Login/Register Forms */
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 5% 2rem;
+            background: linear-gradient(135deg, var(--light-blue), var(--bg-light));
+        }
+
+        .auth-card {
+            background: var(--white);
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            max-width: 450px;
+            width: 100%;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-header h2 {
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            background: var(--white);
+            color: var(--text-dark);
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--secondary-blue);
+        }
+
+        .role-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .role-btn {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: var(--white);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .role-btn.active {
+            border-color: var(--secondary-blue);
+            background: var(--light-blue);
+            color: var(--primary-blue);
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+            padding-top: 70px;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--white);
+            padding: 2rem 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            position: fixed;
+            height: calc(100vh - 70px);
+            overflow-y: auto;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 2rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: var(--light-blue);
+            color: var(--secondary-blue);
+            border-left: 4px solid var(--secondary-blue);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 2rem;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .dashboard-title {
+            font-size: 2rem;
+            color: var(--primary-blue);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .notification-bell {
+            position: relative;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            cursor: pointer;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger-red);
+            color: var(--white);
+            font-size: 0.7rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 50%;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+        }
+
+        .stat-icon.blue { background: var(--light-blue); color: var(--secondary-blue); }
+        .stat-icon.green { background: #d1fae5; color: var(--success-green); }
+        .stat-icon.gold { background: #fef3c7; color: var(--accent-gold); }
+        .stat-icon.red { background: #fee2e2; color: var(--danger-red); }
+
+        .stat-info h3 {
+            font-size: 1.8rem;
+            color: var(--primary-blue);
+        }
+
+        .stat-info p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .content-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow-x: auto;
+            display: block;
+        }
+
+        .data-table thead {
+            background: var(--bg-light);
+        }
+
+        .data-table th, .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .data-table tbody tr:hover {
+            background: var(--light-blue);
+        }
+
+        .badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-success { background: #d1fae5; color: var(--success-green); }
+        .badge-warning { background: #fef3c7; color: var(--accent-gold); }
+        .badge-danger { background: #fee2e2; color: var(--danger-red); }
+        .badge-info { background: var(--light-blue); color: var(--secondary-blue); }
+
+        .upload-area {
+            border: 2px dashed var(--secondary-blue);
+            border-radius: 12px;
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            background: var(--light-blue);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--secondary-blue);
+            margin-bottom: 1rem;
+        }
+
+        /* Chatbot */
+        .chatbot-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: var(--white);
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            z-index: 999;
+            transition: transform 0.3s;
+        }
+
+        .chatbot-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .chatbot-window {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 350px;
+            height: 500px;
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: none;
+            flex-direction: column;
+            z-index: 998;
+        }
+
+        .chatbot-window.active {
+            display: flex;
+        }
+
+        .chatbot-header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: var(--white);
+            padding: 1rem;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chatbot-close {
+            background: transparent;
+            border: none;
+            color: var(--white);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            background: var(--bg-light);
+        }
+
+        .chat-message {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .message-bot {
+            justify-content: flex-start;
+        }
+
+        .message-user {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 0.8rem;
+            border-radius: 12px;
+        }
+
+        .message-bot .message-bubble {
+            background: var(--white);
+            color: var(--text-dark);
+        }
+
+        .message-user .message-bubble {
+            background: var(--secondary-blue);
+            color: var(--white);
+        }
+
+        .chatbot-input {
+            display: flex;
+            padding: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-right: 0.5rem;
+        }
+
+        .chatbot-input button {
+            padding: 0.8rem 1.2rem;
+            background: var(--secondary-blue);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-dark);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--success-green);
+            transition: width 1s ease;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--primary-blue);
+            color: var(--white);
+            padding: 3rem 5%;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+        }
+
+        .footer-section a {
+            color: var(--white);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 1rem;
+        }
+
+        /* Digital ID Card */
+        .id-card {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: var(--white);
+            padding: 2rem;
+            border-radius: 16px;
+            max-width: 400px;
+        }
+
+        .id-card-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .id-card-body {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 12px;
+        }
+
+        .id-field {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .qr-code {
+            width: 100px;
+            height: 100px;
+            background: var(--white);
+            margin: 1rem auto;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--text-dark);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links, .nav-buttons {
+                display: none;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .chatbot-window {
+                width: 90%;
+                right: 5%;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-university"></i>
+                <span>LoanTrack</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" onclick="showPage('home')">Home</a></li>
+                <li><a href="#" onclick="showPage('about')">About</a></li>
+                <li><a href="#" onclick="showPage('features')">Features</a></li>
+                <li><a href="#" onclick="showPage('contact')">Contact</a></li>
+            </ul>
+            <div class="nav-buttons">
+                <button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+                <button class="lang-toggle" onclick="toggleLanguage()">EN</button>
+                <a href="#" class="btn btn-secondary" onclick="showPage('login')">Login</a>
+                <a href="#" class="btn btn-primary" onclick="showPage('register')">Register</a>
+            </div>
+            <button class="mobile-menu" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Landing Page -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Ensuring Transparent Loan Utilization through Smart Automation</h1>
+            <p>Track, Verify, and Monitor Loan Usage with AI-Powered GeoTagging Technology</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="showPage('register', 'beneficiary')">Get Started as Beneficiary</button>
+                <button class="btn btn-secondary" onclick="showPage('register', 'admin')">Admin/Bank Access</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features hidden">
+        <h2 class="section-title">Our Features</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3>AI-Powered Verification</h3>
+                <p>Advanced AI algorithms detect fake submissions and verify authenticity automatically</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-map-marker-alt"></i></div>
+                <h3>GeoTagging</h3>
+                <p>Automatic location tracking ensures proof is submitted from the actual site</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                <h3>Real-Time Analytics</h3>
+                <p>Comprehensive dashboards with visual reports and trend analysis</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+                <h3>Mobile Responsive</h3>
+                <p>Access from anywhere, on any device - desktop, tablet, or mobile</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-bell"></i></div>
+                <h3>Smart Notifications</h3>
+                <p>Instant alerts for verification status and important updates</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-headset"></i></div>
+                <h3>24/7 Support</h3>
+                <p>AI chatbot assistance available round the clock for queries</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Page -->
+    <section id="about" class="features hidden">
+        <h2 class="section-title">About Us</h2>
+        <div class="content-card" style="max-width: 1000px; margin: 0 auto;">
+            <h3 style="color: var(--primary-blue); margin-bottom: 1rem;">Our Mission</h3>
+            <p style="margin-bottom: 2rem;">To make loan utilization transparent and fraud-free through cutting-edge technology. We empower financial institutions and beneficiaries with tools that ensure accountability and trust in the lending process.</p>
+            
+            <h3 style="color: var(--primary-blue); margin-bottom: 1rem;">Technology Stack</h3>
+            <p style="margin-bottom: 1rem;">Our platform leverages:</p>
+            <ul style="margin-left: 2rem; margin-bottom: 2rem;">
+                <li>Artificial Intelligence for fraud detection</li>
+                <li>GeoTagging for location verification</li>
+                <li>Automated workflows for efficient processing</li>
+                <li>Advanced analytics for insights</li>
+            </ul>
+            
+            <h3 style="color: var(--primary-blue); margin-bottom: 1rem;">Why Choose Us?</h3>
+            <p>With years of experience in financial technology, we understand the challenges faced by both lenders and borrowers. Our solution bridges the gap with transparency, efficiency, and security at its core.</p>
+        </div>
+    </section>
+
+    <!-- Contact Page -->
+    <section id="contact" class="auth-container hidden">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2>Contact Us</h2>
+                <p>We'd love to hear from you</p>
+            </div>
+            <form onsubmit="handleContactSubmit(event)">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Login Page -->
+    <section id="login" class="auth-container hidden">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2>Welcome Back</h2>
+                <p>Login to your account</p>
+            </div>
+            <div class="role-selector">
+                <div class="role-btn active" onclick="selectRole('beneficiary', 'login')">
+                    <i class="fas fa-user"></i>
+                    <p>Beneficiary</p>
+                </div>
+                <div class="role-btn" onclick="selectRole('admin', 'login')">
+                    <i class="fas fa-user-shield"></i>
+                    <p>Admin/Bank</p>
+                </div>
+            </div>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group" id="loginBeneficiaryFields">
+                    <label>Phone Number</label>
+                    <input type="tel" placeholder="Enter your phone number" required>
+                </div>
+                <div class="form-group hidden" id="loginAdminFields">
+                    <label>Email</label>
+                    <input type="email" placeholder="Enter your email">
+                    <label style="margin-top: 1rem;">Password</label>
+                    <input type="password" placeholder="Enter your password">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Login</button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem;">Don't have an account? <a href="#" onclick="showPage('register')" style="color: var(--secondary-blue);">Register here</a></p>
+        </div>
+    </section>
+
+    <!-- Register Page -->
+    <section id="register" class="auth-container hidden">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2>Create Account</h2>
+                <p>Join our platform today</p>
+            </div>
+            <div class="role-selector">
+                <div class="role-btn active" onclick="selectRole('beneficiary', 'register')">
+                    <i class="fas fa-user"></i>
+                    <p>Beneficiary</p>
+                </div>
+                <div class="role-btn" onclick="selectRole('admin', 'register')">
+                    <i class="fas fa-user-shield"></i>
+                    <p>Admin/Bank</p>
+                </div>
+            </div>
+            <form id="registerForm" onsubmit="handleRegister(event)">
+                <div id="beneficiaryFields">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" placeholder="Enter your phone number" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Loan ID</label>
+                        <input type="text" placeholder="Enter your loan ID" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <textarea rows="2" placeholder="Enter your address" required></textarea>
+                    </div>
+                </div>
+                <div id="adminFields" class="hidden">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label>Designation</label>
+                        <input type="text" placeholder="Enter your designation">
+                    </div>
+                    <div class="form-group">
+                        <label>Organization Email</label>
+                        <input type="email" placeholder="Enter organization email">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" placeholder="Create a password">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Register</button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem;">Already have an account? <a href="#" onclick="showPage('login')" style="color: var(--secondary-blue);">Login here</a></p>
+        </div>
+    </section>
+
+    <!-- Beneficiary Dashboard -->
+    <section id="beneficiaryDashboard" class="dashboard hidden">
+        <aside class="sidebar" id="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active" onclick="showDashboardTab('ben-overview')"><i class="fas fa-th-large"></i> Dashboard</a></li>
+                <li><a href="#" onclick="showDashboardTab('ben-upload')"><i class="fas fa-upload"></i> Upload Proof</a></li>
+                <li><a href="#" onclick="showDashboardTab('ben-loans')"><i class="fas fa-file-invoice-dollar"></i> Loan Details</a></li>
+                <li><a href="#" onclick="showDashboardTab('ben-status')"><i class="fas fa-tasks"></i> Status</a></li>
+                <li><a href="#" onclick="showDashboardTab('ben-id')"><i class="fas fa-id-card"></i> Digital ID</a></li>
+                <li><a href="#" onclick="showPage('home')"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </aside>
+        <main class="main-content">
+            <div class="dashboard-header">
+                <div>
+                    <h1 class="dashboard-title">Beneficiary Dashboard</h1>
+                    <p style="color: var(--text-light);" id="currentDateTime"></p>
+                </div>
+                <div class="header-actions">
+                    <div class="notification-bell" onclick="showNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <span style="font-weight: 600;">Welcome, Rajesh Kumar</span>
+                </div>
+            </div>
+
+            <!-- Overview Tab -->
+            <div id="ben-overview" class="dashboard-tab">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="fas fa-hand-holding-usd"></i></div>
+                        <div class="stat-info">
+                            <h3>1</h3>
+                            <p>Total Loans</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon gold"><i class="fas fa-clock"></i></div>
+                        <div class="stat-info">
+                            <h3>2</h3>
+                            <p>Pending Approvals</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                        <div class="stat-info">
+                            <h3>5</h3>
+                            <p>Verified Uploads</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon red"><i class="fas fa-exclamation-triangle"></i></div>
+                        <div class="stat-info">
+                            <h3>0</h3>
+                            <p>Rejected</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Recent Activity</h3>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Activity</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Oct 3, 2025</td>
+                                <td>Uploaded equipment purchase proof</td>
+                                <td><span class="badge badge-success">Verified</span></td>
+                            </tr>
+                            <tr>
+                                <td>Oct 1, 2025</td>
+                                <td>Uploaded raw material invoice</td>
+                                <td><span class="badge badge-warning">Pending</span></td>
+                            </tr>
+                            <tr>
+                                <td>Sep 28, 2025</td>
+                                <td>Uploaded shop renovation photos</td>
+                                <td><span class="badge badge-success">Verified</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Verification Statistics</h3>
+                    </div>
+                    <canvas id="benChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Upload Tab -->
+            <div id="ben-upload" class="dashboard-tab hidden">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Upload Utilization Proof</h3>
+                    </div>
+                    <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <h3>Click to Upload Files</h3>
+                        <p>Supported: Images (JPG, PNG) and Videos (MP4)</p>
+                        <input type="file" id="fileInput" style="display: none;" accept="image/*,video/*" onchange="handleFileUpload(event)">
+                    </div>
+                    <div style="margin-top: 2rem;">
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="uploadDescription" rows="3" placeholder="Describe what this proof is for..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select id="uploadCategory">
+                                <option>Equipment Purchase</option>
+                                <option>Raw Materials</option>
+                                <option>Infrastructure</option>
+                                <option>Inventory</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" onclick="submitUpload()">Submit for Verification</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loan Details Tab -->
+            <div id="ben-loans" class="dashboard-tab hidden">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">My Loan Details</h3>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                        <div>
+                            <p style="color: var(--text-light); margin-bottom: 0.5rem;">Loan ID</p>
+                            <h3 style="color: var(--primary-blue);">LN2024-1547</h3>
+                        </div>
+                        <div>
+                            <p style="color: var(--text-light); margin-bottom: 0.5rem;">Sanctioned Amount</p>
+                            <h3 style="color: var(--success-green);">₹5,00,000</h3>
+                        </div>
+                        <div>
+                            <p style="color: var(--text-light); margin-bottom: 0.5rem;">Utilized Amount</p>
+                            <h3 style="color: var(--secondary-blue);">₹3,75,000</h3>
+                        </div>
+                        <div>
+                            <p style="color: var(--text-light); margin-bottom: 0.5rem;">Remaining</p>
+                            <h3 style="color: var(--accent-gold);">₹1,25,000</h3>
+                        </div>
+                    </div>
+                    <div style="margin-top: 2rem;">
+                        <p style="color: var(--text-light); margin-bottom: 0.5rem;">Utilization Progress</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 75%;"></div>
+                        </div>
+                        <p style="text-align: right; color: var(--text-light); font-size: 0.9rem; margin-top: 0.5rem;">75% Utilized</p>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Purpose of Loan</h3>
+                    </div>
+                    <p>Small Business Expansion - Purchase of equipment and raw materials for textile manufacturing unit</p>
+                </div>
+            </div>
+
+            <!-- Status Tab -->
+            <div id="ben-status" class="dashboard-tab hidden">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Submission Status</h3>
+                        <input type="text" placeholder="Search..." style="padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 8px;">
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Loan ID</th>
+                                <th>Category</th>
+                                <th>Upload Date</th>
+                                <th>AI Verification</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>LN2024-1547</td>
+                                <td>Equipment</td>
+                                <td>Oct 3, 2025</td>
+                                <td><span class="badge badge-success">Verified</span></td>
+                                <td><span class="badge badge-success">Approved</span></td>
+                            </tr>
+                            <tr>
+                                <td>LN2024-1547</td>
+                                <td>Raw Materials</td>
+                                <td>Oct 1, 2025</td>
+                                <td><span class="badge badge-info">In Progress</span></td>
+                                <td><span class="badge badge-warning">Pending</span></td>
+                            </tr>
+                            <tr>
+                                <td>LN2024-1547</td>
+                                <td>Infrastructure</td>
+                                <td>Sep 28, 2025</td>
+                                <td><span class="badge badge-success">Verified</span></td>
+                                <td><span class="badge badge-success">Approved</span></td>
+                            </tr>
+                            <tr>
+                                <td>LN2024-1547</td>
+                                <td>Inventory</td>
+                                <td>Sep 25, 2025</td>
+                                <td><span class="badge badge-success">Verified</span></td>
+                                <td><span class="badge badge-success">Approved</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Digital ID Tab -->
+            <div id="ben-id" class="dashboard-tab hidden">
+                <div class="content-card">
+                    <div class="id-card" style="margin: 0 auto;">
+                        <div class="id-card-header">
+                            <h2>DIGITAL BENEFICIARY ID</h2>
+                            <p>Loan Utilization Tracking System</p>
+                        </div>
+                        <div class="id-card-body">
+                            <div class="id-field">
+                                <strong>Name:</strong>
+                                <span>Rajesh Kumar</span>
+                            </div>
+                            <div class="id-field">
+                                <strong>Loan ID:</strong>
+                                <span>LN2024-1547</span>
+                            </div>
+                            <div class="id-field">
+                                <strong>Phone:</strong>
+                                <span>+91 98765 43210</span>
+                            </div>
+                            <div class="id-field">
+                                <strong>Status:</strong>
+                                <span>Active</span>
+                            </div>
+                            <div class="qr-code">
+                                <div style="text-align: center;">
+                                    <i class="fas fa-qrcode" style="font-size: 3rem;"></i>
+                                    <p style="margin-top: 0.5rem;">QR Code</p>
+                                </div>
+                            </div>
+                            <p style="text-align: center; font-size: 0.8rem; margin-top: 1rem;">Valid Until: Dec 31, 2026</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </section>
+
+    <!-- Admin Dashboard -->
+    <section id="adminDashboard" class="dashboard hidden">
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active" onclick="showDashboardTab('admin-overview')"><i class="fas fa-th-large"></i> Dashboard</a></li>
+                <li><a href="#" onclick="showDashboardTab('admin-beneficiaries')"><i class="fas fa-users"></i> Beneficiaries</a></li>
+                <li><a href="#" onclick="showDashboardTab('admin-verification')"><i class="fas fa-check-double"></i> Verification</a></li>
+                <li><a href="#" onclick="showDashboardTab('admin-reports')"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                <li><a href="#" onclick="showPage('home')"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </aside>
+        <main class="main-content">
+            <div class="dashboard-header">
+                <div>
+                    <h1 class="dashboard-title">Admin Dashboard</h1>
+                    <p style="color: var(--text-light);" id="adminDateTime"></p>
+                </div>
+                <div class="header-actions">
+                    <div class="notification-bell" onclick="showNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">7</span>
+                    </div>
+                    <span style="font-weight: 600;">Admin User</span>
+                </div>
+            </div>
+
+            <!-- Overview Tab -->
+            <div id="admin-overview" class="dashboard-tab">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+                        <div class="stat-info">
+                            <h3>1,247</h3>
+                            <p>Total Beneficiaries</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon gold"><i class="fas fa-hourglass-half"></i></div>
+                        <div class="stat-info">
+                            <h3>89</h3>
+                            <p>Pending Verifications</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                        <div class="stat-info">
+                            <h3>3,456</h3>
+                            <p>Verified Loans</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon red"><i class="fas fa-exclamation-circle"></i></div>
+                        <div class="stat-info">
+                            <h3>12</h3>
+                            <p>Fraud Alerts</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem;">
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Verification Trends</h3>
+                        </div>
+                        <canvas id="adminTrendChart"></canvas>
+                    </div>
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Loan Distribution</h3>
+                        </div>
+                        <canvas id="adminPieChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Recent Submissions</h3>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Beneficiary</th>
+                                <th>Loan ID</th>
+                                <th>Submitted</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Priya Sharma</td>
+                                <td>LN2024-1823</td>
+                                <td>2 hours ago</td>
+                                <td><span class="badge badge-warning">Pending</span></td>
+                                <td><button class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Review</button></td>
+                            </tr>
+                            <tr>
+                                <td>Amit Patel</td>
+                                <td>LN2024-1756</td>
+                                <td>5 hours ago</td>
+                                <td><span class="badge badge-warning">Pending</span></td>
+                                <td><button class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Review</button></td>
+                            </tr>
+                            <tr>
+                                <td>Sunita Devi</td>
+                                <td>LN2024-1698</td>
+                                <td>1 day ago</td>
+                                <td><span class="badge badge-success">Approved</span></td>
+                                <td><button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">View</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Beneficiaries Tab -->
+            <div id="admin-beneficiaries" class="dashboard-tab hidden">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">All Beneficiaries</h3>
+                        <div style="display: flex; gap: 1rem;">
+                            <input type="text" placeholder="Search beneficiaries..." style="padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 8px;">
+                            <select style="padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 8px;">
+                                <option>All Status</option>
+                                <option>Active</option>
+                                <option>Inactive</option>
+                                <option>Pending</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Loan ID</th>
+                                <th>Amount</th>
+                                <th>Utilized</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Rajesh Kumar</td>
+                                <td>LN2024-1547</td>
+                                <td>₹5,00,000</td>
+                                <td>75%</td>
+                                <td><span class="badge badge-success">Active</span></td>
+                                <td><button class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">View</button></td>
+                            </tr>
+                            <tr>
+                                <td>Priya Sharma</td>
+                                <td>LN2024-1823</td>
+                                <td>₹3,00,000</td>
+                                <td>45%</td>
+                                <td><span class="badge badge-success">Active</span></td>
+                                <td><button class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">View</button></td>
+                            </tr>
+                            <tr>
+                                <td>Amit Patel</td>
+                                <td>LN2024-1756</td>
+                                <td>₹7,50,000</td>
+                                <td>92%</td>
+                                <td><span class="badge badge-success">Active</span></td>
+                                <td><button class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">View</button></td>
+                            </tr>
+                            <tr>
+                                <td>Sunita Devi</td>
+                                <td>LN2024-1698</td>
+                                <td>₹2,00,000</td>
+                                <td>60%</td>
+                                <td><span class="badge badge-success">Active</span></td>
+                                <td><button class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">View</button></td>
+                            </tr>
+                            <tr>
+                                <td>Mohammed Ali</td>
+                                <td>LN2024-1634</td>
+                                <td>₹4,50,000</td>
+                                <td>38%</td>
+                                <td><span class="badge badge-warning">Pending</span></td>
+                                <td><button class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">View</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Verification Tab -->
+            <div id="admin-verification" class="dashboard-tab hidden">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Pending Verifications</h3>
+                    </div>
+                    <div style="display: grid; gap: 1.5rem;">
+                        <div style="border: 1px solid #e5e7eb; padding: 1.5rem; border-radius: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                <div>
+                                    <h4 style="color: var(--primary-blue);">Priya Sharma - LN2024-1823</h4>
+                                    <p style="color: var(--text-light); font-size: 0.9rem;">Category: Equipment Purchase | Submitted: 2 hours ago</p>
+                                </div>
+                                <span class="badge badge-info">AI: Verifying</span>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                                <div style="background: var(--bg-light); padding: 1rem; border-radius: 8px; text-align: center;">
+                                    <i class="fas fa-image" style="font-size: 3rem; color: var(--secondary-blue);"></i>
+                                    <p style="margin-top: 0.5rem; font-size: 0.9rem;">materials_video.mp4</p>
+                                </div>
+                            </div>
+                            <div style="background: var(--light-blue); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                                <p style="font-size: 0.9rem;"><strong>Location:</strong> 23.0225° N, 72.5714° E (Ahmedabad, Gujarat)</p>
+                                <p style="font-size: 0.9rem; margin-top: 0.5rem;"><strong>Timestamp:</strong> Oct 4, 2025 7:15 AM</p>
+                            </div>
+                            <div style="display: flex; gap: 1rem;">
+                                <button class="btn btn-primary" onclick="approveVerification()">Approve</button>
+                                <button class="btn btn-secondary" onclick="rejectVerification()">Reject</button>
+                                <button class="btn btn-secondary" style="background: var(--accent-gold);" onclick="markForReview()">Mark for Review</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Tab -->
+            <div id="admin-reports" class="dashboard-tab hidden">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem;">
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Loan Utilization Statistics</h3>
+                        </div>
+                        <canvas id="utilizationChart"></canvas>
+                    </div>
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Region-wise Distribution</h3>
+                        </div>
+                        <canvas id="regionChart"></canvas>
+                    </div>
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Fraud Detection Trends</h3>
+                        </div>
+                        <canvas id="fraudChart"></canvas>
+                    </div>
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Monthly Performance</h3>
+                        </div>
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About LoanTrack</h3>
+                <p>Ensuring transparent loan utilization through smart automation and AI-powered verification.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="#" onclick="showPage('home')">Home</a>
+                <a href="#" onclick="showPage('about')">About</a>
+                <a href="#" onclick="showPage('features')">Features</a>
+                <a href="#" onclick="showPage('contact')">Contact</a>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Info</h3>
+                <p><i class="fas fa-envelope"></i> support@loantrack.gov.in</p>
+                <p><i class="fas fa-phone"></i> 1800-123-4567</p>
+                <p><i class="fas fa-map-marker-alt"></i> New Delhi, India</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div style="display: flex; gap: 1rem; font-size: 1.5rem;">
+                    <i class="fab fa-facebook" style="cursor: pointer;"></i>
+                    <i class="fab fa-twitter" style="cursor: pointer;"></i>
+                    <i class="fab fa-linkedin" style="cursor: pointer;"></i>
+                    <i class="fab fa-instagram" style="cursor: pointer;"></i>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Loan Utilization Tracking System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Chatbot -->
+    <button class="chatbot-btn" onclick="toggleChatbot()">
+        <i class="fas fa-comments"></i>
+    </button>
+
+    <div class="chatbot-window" id="chatbot">
+        <div class="chatbot-header">
+            <h3><i class="fas fa-robot"></i> Support Assistant</h3>
+            <button class="chatbot-close" onclick="toggleChatbot()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="chatbot-messages" id="chatMessages">
+            <div class="chat-message message-bot">
+                <div class="message-bubble">Hello! I'm here to help. How can I assist you today?</div>
+            </div>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" id="chatInput" placeholder="Type your message..." onkeypress="handleChatKeypress(event)">
+            <button onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="otpModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('otpModal')">&times;</button>
+            <h2 style="color: var(--primary-blue); margin-bottom: 1rem;">Verify OTP</h2>
+            <p style="margin-bottom: 1.5rem;">Enter the 6-digit OTP sent to your phone</p>
+            <input type="text" placeholder="Enter OTP" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1.2rem; text-align: center; letter-spacing: 0.5rem;">
+            <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="verifyOTP()">Verify</button>
+        </div>
+    </div>
+
+    <div class="modal" id="uploadSuccessModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('uploadSuccessModal')">&times;</button>
+            <div style="text-align: center;">
+                <i class="fas fa-check-circle" style="font-size: 4rem; color: var(--success-green); margin-bottom: 1rem;"></i>
+                <h2 style="color: var(--primary-blue); margin-bottom: 1rem;">Upload Successful!</h2>
+                <p>Your proof has been submitted for verification.</p>
+                <div class="progress-bar" style="margin: 1.5rem 0;">
+                    <div class="progress-fill" id="verificationProgress" style="width: 0%;"></div>
+                </div>
+                <p style="color: var(--text-light); font-size: 0.9rem;">AI Verification in progress...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="notificationModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('notificationModal')">&times;</button>
+            <h2 style="color: var(--primary-blue); margin-bottom: 1rem;">Notifications</h2>
+            <div style="max-height: 400px; overflow-y: auto;">
+                <div style="padding: 1rem; border-bottom: 1px solid #e5e7eb; cursor: pointer;" onclick="this.style.background='var(--light-blue)'">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <strong>Proof Verified</strong>
+                        <span style="color: var(--text-light); font-size: 0.85rem;">2h ago</span>
+                    </div>
+                    <p style="color: var(--text-light); font-size: 0.9rem;">Your equipment purchase proof has been verified and approved.</p>
+                </div>
+                <div style="padding: 1rem; border-bottom: 1px solid #e5e7eb; cursor: pointer;" onclick="this.style.background='var(--light-blue)'">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <strong>Upload Reminder</strong>
+                        <span style="color: var(--text-light); font-size: 0.85rem;">1d ago</span>
+                    </div>
+                    <p style="color: var(--text-light); font-size: 0.9rem;">Please upload utilization proof for remaining loan amount.</p>
+                </div>
+                <div style="padding: 1rem; cursor: pointer;" onclick="this.style.background='var(--light-blue)'">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <strong>System Update</strong>
+                        <span style="color: var(--text-light); font-size: 0.85rem;">3d ago</span>
+                    </div>
+                    <p style="color: var(--text-light); font-size: 0.9rem;">New features added to improve your experience.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        let currentPage = 'home';
+        let currentRole = 'beneficiary';
+        let currentLang = 'EN';
+        let charts = {};
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            initializeCharts();
+        });
+
+        // Theme Toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            
+            const icon = document.querySelector('.theme-toggle i');
+            icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        // Language Toggle
+        function toggleLanguage() {
+            currentLang = currentLang === 'EN' ? 'HI' : 'EN';
+            document.querySelector('.lang-toggle').textContent = currentLang;
+            // In real app, this would change all text
+            alert(currentLang === 'HI' ? 'भाषा हिंदी में बदल गई' : 'Language changed to English');
+        }
+
+        // Page Navigation
+        function showPage(page, role = null) {
+            // Hide all sections
+            document.querySelectorAll('section').forEach(section => {
+                section.classList.add('hidden');
+            });
+
+            // Show selected page
+            if (page === 'home') {
+                document.getElementById('home').classList.remove('hidden');
+                document.querySelector('.footer').style.display = 'block';
+            } else {
+                document.querySelector('.footer').style.display = 'none';
+                document.getElementById(page).classList.remove('hidden');
+            }
+
+            if (role) currentRole = role;
+            currentPage = page;
+        }
+
+        // Role Selection
+        function selectRole(role, formType) {
+            currentRole = role;
+            const buttons = document.querySelectorAll(`#${formType} .role-btn`);
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.role-btn').classList.add('active');
+
+            if (formType === 'login') {
+                const benFields = document.getElementById('loginBeneficiaryFields');
+                const adminFields = document.getElementById('loginAdminFields');
+                if (role === 'beneficiary') {
+                    benFields.classList.remove('hidden');
+                    adminFields.classList.add('hidden');
+                } else {
+                    benFields.classList.add('hidden');
+                    adminFields.classList.remove('hidden');
+                }
+            } else {
+                const benFields = document.getElementById('beneficiaryFields');
+                const adminFields = document.getElementById('adminFields');
+                if (role === 'beneficiary') {
+                    benFields.classList.remove('hidden');
+                    adminFields.classList.add('hidden');
+                } else {
+                    benFields.classList.add('hidden');
+                    adminFields.classList.remove('hidden');
+                }
+            }
+        }
+
+        // Authentication
+        function handleLogin(e) {
+            e.preventDefault();
+            if (currentRole === 'beneficiary') {
+                openModal('otpModal');
+            } else {
+                showPage('adminDashboard');
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            alert('Registration successful! Please verify your email/phone.');
+            showPage('login');
+        }
+
+        function verifyOTP() {
+            closeModal('otpModal');
+            showPage('beneficiaryDashboard');
+        }
+
+        // Dashboard Navigation
+        function showDashboardTab(tabId) {
+            document.querySelectorAll('.dashboard-tab').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            document.getElementById(tabId).classList.remove('hidden');
+
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        // File Upload
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                alert(`File selected: ${file.name}\nSize: ${(file.size / 1024).toFixed(2)} KB`);
+            }
+        }
+
+        function submitUpload() {
+            const desc = document.getElementById('uploadDescription').value;
+            const category = document.getElementById('uploadCategory').value;
+            
+            if (!desc) {
+                alert('Please enter a description');
+                return;
+            }
+
+            openModal('uploadSuccessModal');
+            simulateVerification();
+        }
+
+        function simulateVerification() {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                document.getElementById('verificationProgress').style.width = progress + '%';
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        closeModal('uploadSuccessModal');
+                        alert('✓ AI Verification Complete: Proof Verified Successfully!');
+                    }, 500);
+                }
+            }, 200);
+        }
+
+        // Admin Actions
+        function approveVerification() {
+            alert('✓ Verification Approved Successfully!');
+        }
+
+        function rejectVerification() {
+            const reason = prompt('Enter rejection reason:');
+            if (reason) {
+                alert('✗ Verification Rejected. Beneficiary will be notified.');
+            }
+        }
+
+        function markForReview() {
+            alert('⚠ Marked for manual review. Escalated to senior officer.');
+        }
+
+        // Chatbot
+        function toggleChatbot() {
+            document.getElementById('chatbot').classList.toggle('active');
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            const chatMessages = document.getElementById('chatMessages');
+            
+            // User message
+            chatMessages.innerHTML += `
+                <div class="chat-message message-user">
+                    <div class="message-bubble">${message}</div>
+                </div>
+            `;
+
+            input.value = '';
+
+            // Bot response
+            setTimeout(() => {
+                const response = getBotResponse(message.toLowerCase());
+                chatMessages.innerHTML += `
+                    <div class="chat-message message-bot">
+                        <div class="message-bubble">${response}</div>
+                    </div>
+                `;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1000);
+        }
+
+        function handleChatKeypress(e) {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        }
+
+        function getBotResponse(message) {
+            if (message.includes('upload') || message.includes('proof')) {
+                return 'To upload proof, go to Dashboard → Upload Proof. Select your files, add description, and submit. You will receive verification status within 24 hours.';
+            } else if (message.includes('verify') || message.includes('verification')) {
+                return 'Verification typically takes 24-48 hours. Our AI system first checks authenticity, then admin reviews it. You will be notified once complete.';
+            } else if (message.includes('contact') || message.includes('support')) {
+                return 'You can reach us at support@loantrack.gov.in or call 1800-123-4567 (9 AM - 6 PM, Mon-Fri).';
+            } else if (message.includes('status')) {
+                return 'Check your verification status in Dashboard → Status tab. You can see all submissions and their current status.';
+            } else if (message.includes('loan')) {
+                return 'View your loan details in the Loan Details section. It shows sanctioned amount, utilized amount, and remaining balance.';
+            } else {
+                return 'I can help you with: uploading proof, verification status, loan details, and contact support. What would you like to know?';
+            }
+        }
+
+        // Modals
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showNotifications() {
+            openModal('notificationModal');
+        }
+
+        // Contact Form
+        function handleContactSubmit(e) {
+            e.preventDefault();
+            alert('Thank you for contacting us! We will get back to you soon.');
+            e.target.reset();
+        }
+
+        // DateTime Update
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            const dateTimeStr = now.toLocaleDateString('en-IN', options);
+            
+            const elem1 = document.getElementById('currentDateTime');
+            const elem2 = document.getElementById('adminDateTime');
+            if (elem1) elem1.textContent = dateTimeStr;
+            if (elem2) elem2.textContent = dateTimeStr;
+        }
+
+        // Mobile Menu
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('active');
+            }
+        }
+
+        // Charts Initialization
+        function initializeCharts() {
+            // Beneficiary Chart
+            const benCtx = document.getElementById('benChart');
+            if (benCtx) {
+                charts.benChart = new Chart(benCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Verified', 'Pending', 'Rejected'],
+                        datasets: [{
+                            data: [5, 2, 0],
+                            backgroundColor: ['#10b981', '#f59e0b', '#ef4444']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+            }
+
+            // Admin Trend Chart
+            const trendCtx = document.getElementById('adminTrendChart');
+            if (trendCtx) {
+                charts.adminTrendChart = new Chart(trendCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Verifications',
+                            data: [450, 520, 480, 610, 590, 680],
+                            borderColor: '#3b82f6',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            }
+
+            // Admin Pie Chart
+            const pieCtx = document.getElementById('adminPieChart');
+            if (pieCtx) {
+                charts.adminPieChart = new Chart(pieCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Equipment', 'Raw Materials', 'Infrastructure', 'Inventory'],
+                        datasets: [{
+                            data: [30, 25, 20, 25],
+                            backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+            }
+
+            // Utilization Chart
+            const utilCtx = document.getElementById('utilizationChart');
+            if (utilCtx) {
+                charts.utilizationChart = new Chart(utilCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['0-25%', '25-50%', '50-75%', '75-100%'],
+                        datasets: [{
+                            label: 'Beneficiaries',
+                            data: [120, 280, 450, 397],
+                            backgroundColor: '#3b82f6'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            }
+
+            // Region Chart
+            const regionCtx = document.getElementById('regionChart');
+            if (regionCtx) {
+                charts.regionChart = new Chart(regionCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['North', 'South', 'East', 'West', 'Central'],
+                        datasets: [{
+                            label: 'Loans',
+                            data: [340, 280, 190, 250, 187],
+                            backgroundColor: '#10b981'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        indexAxis: 'y'
+                    }
+                });
+            }
+
+            // Fraud Chart
+            const fraudCtx = document.getElementById('fraudChart');
+            if (fraudCtx) {
+                charts.fraudChart = new Chart(fraudCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Fraud Cases',
+                            data: [8, 12, 6, 4, 9, 3],
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true
+                    }
+                });
+            }
+
+            // Monthly Chart
+            const monthlyCtx = document.getElementById('monthlyChart');
+            if (monthlyCtx) {
+                charts.monthlyChart = new Chart(monthlyCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [
+                            {
+                                label: 'Approved',
+                                data: [420, 490, 450, 580, 560, 650],
+                                backgroundColor: '#10b981'
+                            },
+                            {
+                                label: 'Rejected',
+                                data: [30, 30, 30, 30, 30, 30],
+                                backgroundColor: '#ef4444'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
